@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2017",
+    "alwaysStrict": true,
+    "noEmitOnError": true,
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@src/*": [
+        "src/*"
+      ],
+      "@interfaces/*": [
+        "src/interfaces/*"
+      ],
+      "@models/*": [
+        "src/models/*"
+      ],
+      "@embeds/*": [
+        "src/embeds/*"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

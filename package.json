@@ -1,0 +1,46 @@
+{
+  "name": "228-discord-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "dev": "ts-node -r tsconfig-paths/register main.ts",
+    "test": "mocha -r tsconfig-paths/register -r ts-node/register **/*.spec.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/wfcd/genesis.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@types/dotenv": "^6.1.0",
+    "@types/yargs-parser": "^11.0.2",
+    "axios": "^0.18.0",
+    "bufferutil": "^4.0.1",
+    "discord.js": "^11.4.2",
+    "dotenv": "^6.2.0",
+    "erlpack": "github:hammerandchisel/erlpack",
+    "module-alias": "^2.1.0",
+    "moment": "^2.23.0",
+    "typescript": "^3.2.2",
+    "xregexp": "^4.2.4",
+    "yargs-parser": "^11.1.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.18",
+    "@types/xregexp": "^3.0.29",
+    "chai": "^4.2.0",
+    "del": "^3.0.0",
+    "gulp": "^4.0.0",
+    "mocha": "^5.2.0",
+    "sinon": "^7.2.2",
+    "ts-node": "^7.0.1",
+    "tsconfig-paths": "^3.7.0",
+    "tslint": "^5.12.1",
+    "tslint-config-standard": "^8.0.1"
+  }
+}

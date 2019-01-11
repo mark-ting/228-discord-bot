@@ -1,0 +1,9 @@
+# Node files
+node_modules/
+.npm
+
+# dotenv file
+.env
+
+# logfiles
+logs/
