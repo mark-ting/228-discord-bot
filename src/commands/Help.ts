@@ -2,7 +2,7 @@ import { CommandDetailEmbed } from '@embeds/CommandDetailEmbed'
 import { CommandListEmbed } from '@embeds/CommandListEmbed'
 import { Command, Parameter } from '@models/Command'
 import { Core } from '@src/Core'
-import { Message, PermissionString } from 'discord.js'
+import { Message, PermissionString, Permissions } from 'discord.js'
 import { Arguments } from 'yargs-Parser'
 
 class HelpCommand extends Command {
@@ -22,7 +22,7 @@ class HelpCommand extends Command {
     if (!args['command'] && args._.length === 0) {
       const allowableCommands = Array.from(core.commandList.values())
         .filter(command => {
-          message.member.hasPermission(command.neededPerms)
+          return message.member.permissions.has(command.neededPerms)
         })
       const embed = new CommandListEmbed(allowableCommands)
       message.channel.send(embed)

@@ -4,16 +4,12 @@ import { Message, PermissionString } from 'discord.js'
 import { Arguments } from 'yargs-Parser'
 
 export abstract class Command implements Callable, CommandObject {
-  public id: string
-  public namespace: string
-  public desc: string
-  public neededPerms: PermissionString[]
-  public params: Parameter[]
-  public action: CommandAction
-
-  constructor (commandObject: CommandObject) {
-    Object.assign(this, commandObject)
-  }
+  public abstract id: string
+  public abstract namespace: string
+  public abstract desc: string
+  public abstract neededPerms: PermissionString[]
+  public abstract params: Parameter[]
+  public abstract action: CommandAction
 
   public uid (): string {
     return `${this.namespace}::${this.id}`

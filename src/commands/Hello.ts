@@ -7,7 +7,7 @@ class HelloCommand extends Command {
   public readonly id = 'hello'
   public readonly namespace = 'General'
   public readonly desc = 'Says hello'
-  public readonly permsNeeded: PermissionString[] = []
+  public readonly neededPerms: PermissionString[] = []
   public readonly params: Parameter[] = []
 
   public readonly action = async (core: Core, message: Message, args: Arguments) => {
