@@ -1,5 +1,6 @@
 import { Callable } from '@interfaces/Callable'
 import { Core } from '@src/Core'
+import { Logger } from '@src/Logger'
 
 export abstract class Task implements Callable {
   id: string
@@ -8,13 +9,13 @@ export abstract class Task implements Callable {
   repeat: boolean
   interval?: number
 
-  constructor (protected core: Core) {}
+  constructor (protected logger: Logger) {}
 
   abstract setup: (core: Core) => Promise<void>
   abstract action: (core: Core) => Promise<void>
   abstract cleanup: (core: Core) => Promise<void>
 
-  public uid () {
+  public uid (): string {
     return `${this.namespace}::${this.id}`
   }
 }

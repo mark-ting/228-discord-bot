@@ -7,10 +7,22 @@ export class Scheduler extends Component {
   }
 
   public scheduleTasks () {
-    return
+    this.core.taskList.forEach((task) => {
+      // Run setup and then schedule task loop
+      task.setup(this.core)
+      this.logger.info('Scheduler', `Task '${task.uid()}' setup complete.`)
+
+      if (!task.repeat) { return }
+      task.action(this.core)
+      setInterval(task.action, task.interval, this.core)
+      this.logger.info('Scheduler', `Task '${task.uid()}' scheduled to run every ${task.interval} ms.`)
+    })
   }
 
-  public endTasks () {
-    return
+  public cleanupTasks () {
+    this.core.taskList.forEach((task) => {
+      task.cleanup(this.core)
+      this.logger.info('Scheduler', `Task '${task.uid()}' cleaned up.`)
+    })
   }
 }

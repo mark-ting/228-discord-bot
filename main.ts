@@ -1,14 +1,12 @@
+import { Core } from '@src/Core'
+import { Logger } from '@src/Logger'
 import { Client } from 'discord.js'
 import 'dotenv/config' // this import is mandatory
 import * as readline from 'readline'
-import { Core } from '@src/Core'
-import { Logger } from '@src/Logger'
-import { TranslationService } from '@src/services/TranslationService'
 
 const logToConsole = process.env.LOG_TO_CONSOLE === '1'
 const logLevel = parseInt(process.env.LOG_LEVEL, 10)
 const logger = new Logger(new Date(), logToConsole, logLevel)
-const transSvc = new TranslationService(logger)
 
 const configSet = process.env.ENV_CONFIG_SET === '1'
 if (!configSet) {
@@ -30,6 +28,7 @@ if (process.platform === 'win32') {
 
 // Gracefully exit
 process.on('disconnect', () => {
+  core.emit('shutdown')
   logger.info('main', 'Bot shutting down.')
   process.exit()
 })

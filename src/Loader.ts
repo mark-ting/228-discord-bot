@@ -3,6 +3,7 @@ import * as path from 'path'
 import { Core } from './Core'
 import { Command } from './models/Command'
 import { Component } from './models/Component'
+import { Task } from './models/Task'
 
 export class Loader extends Component {
   constructor (core: Core) {
@@ -15,7 +16,10 @@ export class Loader extends Component {
     this.logger.trace('Loader', `Looking for commands in: '${commandDir}'`)
 
     files.forEach((file) => {
-      if (path.extname(file) !== '.js' && path.extname(file) !== '.ts') { return }
+      if (path.extname(file) !== '.js' && path.extname(file) !== '.ts') {
+        this.logger.trace('Loader', `Invalid command file extension ignored: '${file}'`)
+        return
+      }
 
       const commandInstance = require(path.join(commandDir, file))
       if (commandInstance instanceof Function === false) {
@@ -34,6 +38,38 @@ export class Loader extends Component {
       } else {
         this.core.commandList.set(command.id, command)
         this.logger.info('Loader', `Loaded command: '${command.uid()}'`)
+      }
+    })
+  }
+
+  public loadTasks () {
+    const taskDir = path.resolve(path.join('src', 'tasks'))
+    const files = fs.readdirSync(taskDir)
+    this.logger.trace('Loader', `Looking for tasks in: '${taskDir}'`)
+
+    files.forEach((file) => {
+      if (path.extname(file) !== '.js' && path.extname(file) !== '.ts') {
+        this.logger.trace('Loader', `Invalid task file extension ignored: '${file}'`)
+        return
+      }
+
+      const taskInstance = require(path.join(taskDir, file))
+      if (taskInstance instanceof Function === false) {
+        this.logger.error('Loader', `Invalid task file: '${file}'`)
+        return
+      }
+
+      const task: Task = new taskInstance(this.core)
+      if (task instanceof Task === false) {
+        this.logger.error('Loader', `Task initialization failed: '${file}'`)
+        return
+      }
+
+      if (this.core.taskList.has(task.id)) {
+        this.logger.warn('Loader', `Duplicate task '${task.uid()}' Some tasks may not work as expected until resolved.`)
+      } else {
+        this.core.taskList.set(task.id, task)
+        this.logger.info('Loader', `Loaded task: '${task.uid()}'`)
       }
     })
   }

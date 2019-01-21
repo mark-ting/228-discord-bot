@@ -1,40 +1,53 @@
-import { Client, GuildChannel, Message } from 'discord.js'
+import { Client, Message } from 'discord.js'
 import { EventEmitter } from 'events'
-import { Invocation } from '@interfaces/Invocation'
 import { Handler } from './Handler'
+import { Invocation } from './interfaces/Invocation'
 import { Loader } from './Loader'
 import { Logger } from './Logger'
 import { Command } from './models/Command'
+import { Service } from './models/Service'
+import { Task } from './models/Task'
 import { Observer } from './Observer'
 import { Parser } from './Parser'
+import { Scheduler } from './Scheduler'
 import { Store } from './Store'
 
 export class Core extends EventEmitter {
   // Bot config
   public commandSymbol: string
   public commandList: Map<string, Command>
+  public serviceList: Map<string, Service>
+  public taskList: Map<string, Task>
+  public store: Store
 
   // Components
   private loader: Loader
   private observer: Observer
   private parser: Parser
   private handler: Handler
+  private scheduler: Scheduler
 
   constructor (public logger: Logger, public client: Client, private token: string) {
     super()
 
     this.commandSymbol = '!'
     this.commandList = new Map()
+    this.serviceList = new Map()
+    this.commandList = new Map()
+    this.taskList = new Map()
+    this.store = new Store(this)
 
     this.loader = new Loader(this)
     this.observer = new Observer(this)
     this.parser = new Parser(this)
     this.handler = new Handler(this)
+    this.scheduler = new Scheduler(this)
 
     this.setupListeners()
     this.setupClient()
 
     this.loader.loadCommands()
+    this.loader.loadTasks()
   }
 
   // register event handlers for Discord.js client
@@ -77,13 +90,11 @@ export class Core extends EventEmitter {
     // this.client.on('messageReactionRemove', () => {})
     // this.client.on('messageReactionRemoveAll', () => {})
     // this.client.on('messageUpdate', () => {})
-    this.client.on('presenceUpdate', (oldMember, newMember) => {
-      console.log(oldMember.presence)
-      console.log(newMember.presence)
-    })
+    // this.client.on('presenceUpdate', (oldMember, newMember) => {})
     // this.client.on('rateLimit', () => {})
     this.client.on('ready', () => {
       this.logger.info('Client', `Logged in as ${this.client.user.tag}`)
+      this.scheduler.scheduleTasks()
     })
     // this.client.on('reconnecting', () => {})
     // this.client.on('resume', () => {})
@@ -108,6 +119,13 @@ export class Core extends EventEmitter {
   }
 
   private setupListeners () {
+    this.on('shutdown', () => {
+      if (!process.env.OFFLINE) {
+        this.client.destroy()
+      }
+      this.scheduler.cleanupTasks()
+    })
+
     // Message observed
     this.on('messageFilter', (message: Message) => {
       this.logger.trace('Core', 'Message observed.')
