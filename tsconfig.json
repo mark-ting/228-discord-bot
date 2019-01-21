@@ -9,8 +9,8 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@src/*": [
-        "src/*"
+      "@embeds/*": [
+        "src/embeds/*"
       ],
       "@interfaces/*": [
         "src/interfaces/*"
@@ -18,8 +18,11 @@
       "@models/*": [
         "src/models/*"
       ],
-      "@embeds/*": [
-        "src/embeds/*"
+      "@services/*": [
+        "src/services/*"
+      ],
+      "@src/*": [
+        "src/*"
       ]
     }
   },
