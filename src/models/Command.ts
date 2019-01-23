@@ -1,7 +1,7 @@
 import { Callable } from '@interfaces/Callable'
 import { Core } from '@src/Core'
 import { Message, PermissionString } from 'discord.js'
-import { Arguments } from 'yargs-Parser'
+import { Arguments } from 'yargs-parser'
 
 export abstract class Command implements Callable, CommandObject {
   public abstract id: string

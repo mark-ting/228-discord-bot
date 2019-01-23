@@ -2,8 +2,8 @@ import { CommandDetailEmbed } from '@embeds/CommandDetailEmbed'
 import { CommandListEmbed } from '@embeds/CommandListEmbed'
 import { Command, Parameter } from '@models/Command'
 import { Core } from '@src/Core'
-import { Message, PermissionString, Permissions } from 'discord.js'
-import { Arguments } from 'yargs-Parser'
+import { Message, PermissionString } from 'discord.js'
+import { Arguments } from 'yargs-parser'
 
 class HelpCommand extends Command {
   public readonly id = 'help'

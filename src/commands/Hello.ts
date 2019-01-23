@@ -1,7 +1,7 @@
 import { Command, Parameter } from '@models/Command'
 import { Core } from '@src/Core'
 import { Message, PermissionString } from 'discord.js'
-import { Arguments } from 'yargs-Parser'
+import { Arguments } from 'yargs-parser'
 
 class HelloCommand extends Command {
   public readonly id = 'hello'
