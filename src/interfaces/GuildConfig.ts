@@ -1,50 +1,51 @@
-import { Snowflake, Guild } from 'discord.js'
+import { Guild, Snowflake } from 'discord.js'
 
-export interface ServerConfig {
-  id: Snowflake
+export interface GuildConfig {
+  guildID: Snowflake
   ownerID: Snowflake
   blacklist: Set<Snowflake>
   whitelist: Set<Snowflake>
-  channels: {
+  channelIDs: {
     stream?: Snowflake
     logging?: Snowflake
   }
 }
 
 export interface FlattenedConfig {
-  id: Snowflake
+  guildID: Snowflake
   ownerID: Snowflake
   blacklist: Snowflake[]
   whitelist: Snowflake[]
-  channels: {
+  channelIDs: {
     stream?: Snowflake
     logging?: Snowflake
   }
 }
 
-export function flattenConfig (c: ServerConfig): FlattenedConfig {
+// Config inflate/deflate needed for de/serialization of Sets
+export function deflateConfig (c: GuildConfig): FlattenedConfig {
   return Object.assign(c, {
     blacklist: Array.from(c.blacklist),
     whitelist: Array.from(c.whitelist)
   })
 }
 
-export function inflateConfig (f: FlattenedConfig): ServerConfig {
+export function inflateConfig (f: FlattenedConfig): GuildConfig {
   return Object.assign(f, {
     blacklist: new Set(f.blacklist),
     whitelist: new Set(f.whitelist)
   })
 }
 
-export async function createConfig (guild: Guild) {
+export async function createConfig (guild: Guild): Promise<GuildConfig> {
   const bans = (await guild.fetchBans()).keyArray()
 
   return {
-    id: guild.id,
+    guildID: guild.id,
     ownerID: guild.ownerID,
     blacklist: new Set(bans),
     whitelist: new Set(),
-    channels: {
+    channelIDs: {
       stream: '',
       logging: ''
     }

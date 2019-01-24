@@ -1,5 +1,5 @@
 import pg = require('pg-promise')
-import { createConfig, flattenConfig, inflateConfig, ServerConfig } from '@interfaces/ServerConfig'
+import { createConfig, deflateConfig, GuildConfig, inflateConfig } from '@interfaces/GuildConfig'
 import { Component } from '@models/Component'
 import { Guild, Snowflake } from 'discord.js'
 import { Core } from './Core'
@@ -11,13 +11,15 @@ export type DbStore = Map<string, Database>
 export class Store extends Component {
   private cache: CacheStore = new Map<string, Cache>()
   private db: Database
-  private configs: Map<Snowflake, ServerConfig>
+  public configs: Map<Snowflake, GuildConfig>
 
   constructor (core: Core) {
     super(core)
 
     // PG root
     const initOptions = {}
+
+    // TODO: move DB conn instantiation to top level
     const conn = {
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
@@ -65,11 +67,16 @@ export class Store extends Component {
       }
       const loadQuery = 'SELECT * FROM ${schema:name}.${table:name};'
       const data = await this.db.manyOrNone(loadQuery, values)
-      if (data) {
-        const configs = data.map(inflateConfig)
-        console.log(configs)
+      if (!data) {
+        this.logger.info('Store', 'No previous guild configs found.')
         return
       }
+
+      const configs = data.map(inflateConfig)
+      configs.forEach((config) => {
+        this.configs.set(config.guildID, config)
+      })
+      this.logger.info('Store', `${data.length} guild config(s) loaded.`)
     } catch (err) {
       this.logger.error('Store', err.message)
     }
@@ -105,7 +112,7 @@ export class Store extends Component {
         schema: 'discord',
         table: 'configuration',
         guildID: guildID,
-        config: flattenConfig(this.configs.get(guildID))
+        config: deflateConfig(this.configs.get(guildID))
       }
 
       const query = update
