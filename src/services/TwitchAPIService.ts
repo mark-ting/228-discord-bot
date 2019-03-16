@@ -89,6 +89,13 @@ class TwitchGamesAPI {
   constructor (private instance: AxiosInstance) {}
 
   async getByID (IDs: string[]): Promise<TwitchGame[]> {
+    // remove null game ID
+    IDs = IDs.filter(id => id !== '0')
+
+    if (IDs.length < 1) {
+      throw new Error('Games.getByID requires at least one game ID.')
+    }
+
     const params = TwitchAPIService.arrToSearchParams('id', IDs)
     const req = this.instance.get(this.endpoint, {
       params: params
